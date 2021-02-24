@@ -1,0 +1,22 @@
+<h1>Show Household</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, ExpenseTrackerWeb.HouseholdLive.FormComponent,
+    id: @household.id,
+    title: @page_title,
+    action: @live_action,
+    household: @household,
+    return_to: Routes.household_show_path(@socket, :show, @household) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @household.name %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.household_show_path(@socket, :edit, @household), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.household_index_path(@socket, :index) %></span>

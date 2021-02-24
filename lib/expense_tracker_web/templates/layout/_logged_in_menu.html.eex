@@ -1,0 +1,6 @@
+<ul>
+<%= if @current_user do %>
+  <li><%= link "My Household", to: Routes.household_index_path(@conn, :index) %></li>
+  <li><%= link "My Payments", to: Routes.payment_index_path(@conn, :index) %></li>
+<% end %>
+</ul>

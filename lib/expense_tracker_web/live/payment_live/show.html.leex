@@ -1,0 +1,47 @@
+<h1>Show Payment</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, ExpenseTrackerWeb.PaymentLive.FormComponent,
+    id: @payment.id,
+    title: @page_title,
+    action: @live_action,
+    payment: @payment,
+    return_to: Routes.payment_show_path(@socket, :show, @payment) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @payment.name %>
+  </li>
+
+  <li>
+    <strong>Category:</strong>
+    <%= @payment.category %>
+  </li>
+
+  <li>
+    <strong>Purchase date:</strong>
+    <%= @payment.purchase_date %>
+  </li>
+
+  <li>
+    <strong>Purchase time:</strong>
+    <%= @payment.purchase_time %>
+  </li>
+
+  <li>
+    <strong>Amount:</strong>
+    <%= @payment.amount %>
+  </li>
+
+  <li>
+    <strong>Payment type:</strong>
+    <%= @payment.payment_type %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.payment_show_path(@socket, :edit, @payment), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.payment_index_path(@socket, :index) %></span>
