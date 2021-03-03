@@ -1,17 +1,18 @@
-defmodule ExpenseTracker.Family.UserHousehold do
+defmodule ExpenseTracker.Membership.Householdmember do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "userhouseholds" do
+  schema "householdmembers" do
     belongs_to :user, ExpenseTracker.Accounts.User
     belongs_to :household, ExpenseTracker.Family.Household
+    belongs_to :role, ExpenseTracker.Authority.Role
 
     timestamps()
   end
 
   @doc false
-  def changeset(user_household, attrs) do
-    user_household
+  def changeset(householdmember, attrs) do
+    householdmember
     |> cast(attrs, [])
     |> validate_required([])
   end

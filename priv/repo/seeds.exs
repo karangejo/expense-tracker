@@ -9,3 +9,11 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+  import Ecto.Query, warn: false
+  alias ExpenseTracker.Repo
+
+  alias ExpenseTracker.Authority.Role
+
+  Repo.insert!(%Role{role_name: "admin"})
+  Repo.insert!(%Role{role_name: "member"})

@@ -13,10 +13,20 @@
 
   <li>
     <strong>Name:</strong>
-    <%= @household.name %>
+    <%= @household.household_name %>
+  </li>
+
+  <li>
+    <strong>Role:</strong>
+    <%= @role.role_name %>
   </li>
 
 </ul>
+<form phx-submit="add-user" phx-change="change-email">
+  <label for="email">User Email</label>
+  <input type="email" name="email" value="<%= @user_email %>">
+  <button type="submit">Invite To Household</button>
+  </form>
 
 <span><%= live_patch "Edit", to: Routes.household_show_path(@socket, :edit, @household), class: "button" %></span>
 <span><%= live_redirect "Back", to: Routes.household_index_path(@socket, :index) %></span>

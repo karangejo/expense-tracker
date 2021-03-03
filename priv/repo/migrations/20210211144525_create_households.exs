@@ -3,7 +3,7 @@ defmodule ExpenseTracker.Repo.Migrations.CreateHouseholds do
 
   def change do
     create table(:households) do
-      add :name, :string
+      add :household_name, :string
       add :user_id, references(:users), on_delete: :delete_all
 
       timestamps()

@@ -2,15 +2,23 @@ defmodule ExpenseTrackerWeb.PaymentLive.FormComponent do
   use ExpenseTrackerWeb, :live_component
 
   alias ExpenseTracker.Expenses
+  alias ExpenseTracker.Family
 
   @impl true
-  def update(%{payment: payment} = assigns, socket) do
+  def update(%{payment: payment, current_user: current_user} = assigns, socket) do
     changeset = Expenses.change_payment(payment)
+    category_options = ["groceries", "tools","housing","transportation","food","utilities","insurance","medical/healthcare","savings/investing","fun/entertainment","clothing","personal","education","gift"]
+    payment_type_options = ["cash", "credit","crypto","paypal"]
+    households = Family.list_households_by_user_membership(current_user)
+    household_options = Enum.map(households, fn x ->  [key: x.household_name,  value: x.id] end)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> assign(:payment_type_options, payment_type_options)
+     |> assign(:household_options, household_options)
+     |> assign(:category_options, category_options)}
   end
 
   @impl true
@@ -40,8 +48,11 @@ defmodule ExpenseTrackerWeb.PaymentLive.FormComponent do
     end
   end
 
-  defp save_payment(socket, :new, payment_params) do
-    case Expenses.create_payment(payment_params) do
+  defp save_payment(socket, :new, payment_params = %{"household_id" => household_id}) do
+    IO.inspect(payment_params)
+    household = Family.get_household!(household_id)
+    IO.inspect(payment_params)
+    case Expenses.create_payment(socket.assigns.current_user, household, payment_params) do
       {:ok, _payment} ->
         {:noreply,
          socket

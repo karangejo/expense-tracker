@@ -5,6 +5,7 @@
     id: @household.id || :new,
     title: @page_title,
     action: @live_action,
+    current_user: @current_user,
     household: @household,
     return_to: Routes.household_index_path(@socket, :index) %>
 <% end %>
@@ -20,7 +21,7 @@
   <tbody id="households">
     <%= for household <- @households do %>
       <tr id="household-<%= household.id %>">
-        <td><%= household.name %></td>
+        <td><%= household.household_name %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.household_show_path(@socket, :show, household) %></span>

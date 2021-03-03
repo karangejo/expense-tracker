@@ -3,7 +3,7 @@ defmodule ExpenseTracker.Family.Household do
   import Ecto.Changeset
 
   schema "households" do
-    field :name, :string
+    field :household_name, :string
     belongs_to :user, ExpenseTracker.Accounts.User
 
     timestamps()
@@ -12,7 +12,7 @@ defmodule ExpenseTracker.Family.Household do
   @doc false
   def changeset(household, attrs) do
     household
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:household_name])
+    |> validate_required([:household_name])
   end
 end

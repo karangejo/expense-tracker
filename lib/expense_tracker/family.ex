@@ -7,6 +7,8 @@ defmodule ExpenseTracker.Family do
   alias ExpenseTracker.Repo
 
   alias ExpenseTracker.Family.Household
+  alias ExpenseTracker.Membership.Householdmember
+  alias ExpenseTracker.Accounts.User
 
   @doc """
   Returns the list of households.
@@ -21,6 +23,22 @@ defmodule ExpenseTracker.Family do
     Repo.all(Household)
   end
 
+  def list_households_by_user_membership(user = %User{}) do
+    query = from m in Householdmember,
+            join: h in  assoc(m, :household),
+            where: m.user_id == ^user.id,
+            select: h
+    Repo.all(query)
+  end
+
+  def get_household_and_user_role!(user = %User{}, id) do
+    query = from m in Householdmember,
+      join: h in assoc(m, :household),
+      join: r in assoc(m, :role),
+      where: m.user_id == ^user.id and h.id == ^id,
+      select: %{household: h, role: r}
+    Repo.one(query)
+  end
   @doc """
   Gets a single household.
 
@@ -37,6 +55,10 @@ defmodule ExpenseTracker.Family do
   """
   def get_household!(id), do: Repo.get!(Household, id)
 
+  def get_household_by!(params), do: Repo.get_by!(Household, params)
+
+  def get_household_by_name!(name), do: Repo.get_by!(Household, %{household_name: name})
+
   @doc """
   Creates a household.
 
@@ -49,9 +71,10 @@ defmodule ExpenseTracker.Family do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_household(attrs \\ %{}) do
+  def create_household(user = %User{}, attrs \\ %{}) do
     %Household{}
     |> Household.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:user, user)
     |> Repo.insert()
   end
 
@@ -100,101 +123,5 @@ defmodule ExpenseTracker.Family do
   """
   def change_household(%Household{} = household, attrs \\ %{}) do
     Household.changeset(household, attrs)
-  end
-
-  alias ExpenseTracker.Family.UserHousehold
-
-  @doc """
-  Returns the list of userhouseholds.
-
-  ## Examples
-
-      iex> list_userhouseholds()
-      [%UserHousehold{}, ...]
-
-  """
-  def list_userhouseholds do
-    Repo.all(UserHousehold)
-  end
-
-  @doc """
-  Gets a single user_household.
-
-  Raises `Ecto.NoResultsError` if the User household does not exist.
-
-  ## Examples
-
-      iex> get_user_household!(123)
-      %UserHousehold{}
-
-      iex> get_user_household!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user_household!(id), do: Repo.get!(UserHousehold, id)
-
-  @doc """
-  Creates a user_household.
-
-  ## Examples
-
-      iex> create_user_household(%{field: value})
-      {:ok, %UserHousehold{}}
-
-      iex> create_user_household(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user_household(attrs \\ %{}) do
-    %UserHousehold{}
-    |> UserHousehold.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a user_household.
-
-  ## Examples
-
-      iex> update_user_household(user_household, %{field: new_value})
-      {:ok, %UserHousehold{}}
-
-      iex> update_user_household(user_household, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_user_household(%UserHousehold{} = user_household, attrs) do
-    user_household
-    |> UserHousehold.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a user_household.
-
-  ## Examples
-
-      iex> delete_user_household(user_household)
-      {:ok, %UserHousehold{}}
-
-      iex> delete_user_household(user_household)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_user_household(%UserHousehold{} = user_household) do
-    Repo.delete(user_household)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user_household changes.
-
-  ## Examples
-
-      iex> change_user_household(user_household)
-      %Ecto.Changeset{data: %UserHousehold{}}
-
-  """
-  def change_user_household(%UserHousehold{} = user_household, attrs \\ %{}) do
-    UserHousehold.changeset(user_household, attrs)
   end
 end

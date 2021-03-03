@@ -2,6 +2,8 @@ defmodule ExpenseTrackerWeb.HouseholdLive.FormComponent do
   use ExpenseTrackerWeb, :live_component
 
   alias ExpenseTracker.Family
+  alias ExpenseTracker.Membership
+  alias ExpenseTracker.Authority
 
   @impl true
   def update(%{household: household} = assigns, socket) do
@@ -41,13 +43,19 @@ defmodule ExpenseTrackerWeb.HouseholdLive.FormComponent do
   end
 
   defp save_household(socket, :new, household_params) do
-    case Family.create_household(household_params) do
-      {:ok, _household} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Household created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
-
+    IO.inspect(socket.assigns)
+    case Family.create_household(socket.assigns.current_user, household_params) do
+      {:ok, household} ->
+        admin = Authority.get_role_by_name!("admin")
+        case Membership.create_householdmember(socket.assigns.current_user, admin, household) do
+          {:ok, _membership} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Household and Membership created successfully")
+             |> push_redirect(to: socket.assigns.return_to)}
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:noreply, assign(socket, changeset: changeset)}
+        end
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end

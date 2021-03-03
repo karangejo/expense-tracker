@@ -3,7 +3,7 @@ defmodule ExpenseTracker.Repo.Migrations.CreatePayments do
 
   def change do
     create table(:payments) do
-      add :name, :string
+      add :item_name, :string
       add :category, :string
       add :purchase_date, :date
       add :purchase_time, :time

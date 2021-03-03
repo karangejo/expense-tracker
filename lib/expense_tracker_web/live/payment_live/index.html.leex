@@ -5,6 +5,7 @@
     id: @payment.id || :new,
     title: @page_title,
     action: @live_action,
+    current_user: @current_user,
     payment: @payment,
     return_to: Routes.payment_index_path(@socket, :index) %>
 <% end %>
@@ -12,7 +13,7 @@
 <table>
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Item Name</th>
       <th>Category</th>
       <th>Purchase date</th>
       <th>Purchase time</th>
@@ -25,7 +26,7 @@
   <tbody id="payments">
     <%= for payment <- @payments do %>
       <tr id="payment-<%= payment.id %>">
-        <td><%= payment.name %></td>
+        <td><%= payment.item_name %></td>
         <td><%= payment.category %></td>
         <td><%= payment.purchase_date %></td>
         <td><%= payment.purchase_time %></td>

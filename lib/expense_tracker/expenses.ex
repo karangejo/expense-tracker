@@ -7,6 +7,7 @@ defmodule ExpenseTracker.Expenses do
   alias ExpenseTracker.Repo
   alias ExpenseTracker.Accounts.User
   alias ExpenseTracker.Expenses.Payment
+  alias ExpenseTracker.Family.Household
 
   @doc """
   Returns the list of payments.
@@ -50,10 +51,11 @@ defmodule ExpenseTracker.Expenses do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_payment(user = %User{}, attrs \\ %{}) do
+  def create_payment(user = %User{}, household = %Household{}, attrs \\ %{}) do
     %Payment{}
     |> Payment.changeset(attrs)
     |> Ecto.Changeset.put_assoc(:user, user)
+    |> Ecto.Changeset.put_assoc(:household, household)
     |> Repo.insert()
   end
 

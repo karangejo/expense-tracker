@@ -3,10 +3,19 @@ defmodule ExpenseTrackerWeb.HouseholdLive.Index do
 
   alias ExpenseTracker.Family
   alias ExpenseTracker.Family.Household
+  alias ExpenseTracker.Accounts
+  alias ExpenseTracker.Accounts.User
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :households, list_households())}
+  def mount(_params, session, socket) do
+    case Map.fetch(session, "user_token") do
+      {:ok, token} ->
+        user = Accounts.get_user_by_session_token(token)
+        {:ok, assign(socket, current_user: user)
+              |> assign(:households, list_households(user))}
+      :error ->
+        {:ok, socket}
+    end
   end
 
   @impl true
@@ -37,10 +46,12 @@ defmodule ExpenseTrackerWeb.HouseholdLive.Index do
     household = Family.get_household!(id)
     {:ok, _} = Family.delete_household(household)
 
-    {:noreply, assign(socket, :households, list_households())}
+    {:noreply, assign(socket, :households, list_households(socket.assigns.current_user))}
   end
 
-  defp list_households do
-    Family.list_households()
+  defp list_households(user = %User{}) do
+    Family.list_households_by_user_membership(user)
+    |> IO.inspect()
   end
+
 end
